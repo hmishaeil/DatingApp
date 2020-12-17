@@ -9,20 +9,10 @@ import { Component, OnInit } from '@angular/core';
 
 export class AppComponent implements OnInit {
 
-  users: any;
   title = 'The Dating App';
 
-  constructor(private http: HttpClient){}
+  constructor(){}
   ngOnInit(): void {
-    this.getUsers()
-  }
-
-  getUsers(){
-    this.http.get('https://localhost:5001/api/users').subscribe(res => {
-      this.users = res;
-    }, err => {
-      console.log(err);
-    })
   }
 
 }
