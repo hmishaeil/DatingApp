@@ -18,6 +18,9 @@
                     <a class="nav-link" routerLink="/messages" routerLinkActive="active">Message</a>
                 </li>
             </ul>
+            <li class="nav-item">
+                <a class="nav-link" routerLink="/errors" routerLinkActive="active">Errors</a>
+            </li>
             <div class="nav-item dropdown" dropdown *ngIf="(accountService.userResource$ | async) as user">
                 <button class="btn btn-primary dropdown-toggle" href="#" role="button" aria-haspopup="true"
                     aria-expanded="false" dropdownToggle>Welcome {{user.username | titlecase}}</button>

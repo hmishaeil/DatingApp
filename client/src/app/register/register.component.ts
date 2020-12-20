@@ -13,6 +13,7 @@ export class RegisterComponent implements OnInit {
   @Output() outputFromRegisterComponent = new EventEmitter();
 
   model: any = {};
+  validationErrors = []
 
   constructor(private accountService: AccountService, private toastr: ToastrService) { }
 
@@ -23,7 +24,8 @@ export class RegisterComponent implements OnInit {
     this.accountService.register(this.model).subscribe((res) => {
       this.toastr.info('user registered successfully!');
     }, (err) => {
-      this.toastr.error(err.error);
+      this.validationErrors = err
+      console.log(err)
     })
   }
   onRegisterCancel() {

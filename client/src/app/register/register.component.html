@@ -12,6 +12,11 @@
     <button type="submit" class="btn btn-primary mr-2">Submit</button>
     <button type="button" class="btn btn-danger" (click)="onRegisterCancel()">Cancel</button>
 
+    <div class="mt-3">
+      <ol *ngIf="validationErrors">
+        <li *ngFor="let item of validationErrors" class="text-danger">{{item}}</li>
+      </ol>
+    </div>
     <!-- <select class="browser-default custom-select">
         <option selected>Open this select menu</option>
         <option *ngFor="let user of usersFromHomeComponent" [value]="user.userName">
