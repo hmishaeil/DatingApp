@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
-using API.Extensions;
+using API.Entities;
 
-namespace API.Entities
+namespace API.DTOs
 {
-    public class AppUser
+    public class MemberDTO
     {
         public int Id { get; set; }
-        public string UserName { get; set; }
-        public byte[] PasswordHashed { get; set; }
-        public byte[] PasswordSalt { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public string Username { get; set; }
+        public string PhotoUrl { get; set; }
+        public int Age { get; set; }
         public string KnownAs { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime LastActive { get; set; } = DateTime.Now;
@@ -20,10 +19,6 @@ namespace API.Entities
         public string Interests { get; set; }
         public string City { get; set; }
         public string Country { get; set; }
-        public ICollection<Photo> Photos { get; set; }
-        // public int GetAge(){
-        //     return DateOfBirth.CalcAge();
-        // }
-
+        public ICollection<PhotoDTO> Photos { get; set; }
     }
 }
