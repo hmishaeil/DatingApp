@@ -14,7 +14,7 @@ export class HomeComponent implements OnInit {
   constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.getUsers()
+    // this.getUsers()
   }
 
   registerToggle(){
@@ -25,8 +25,6 @@ export class HomeComponent implements OnInit {
     this.http.get('https://localhost:5001/api/users').subscribe(res => {
       this.users = res;
       console.log(this.users);
-    }, err => {
-      console.log(err);
     })
   }
 
