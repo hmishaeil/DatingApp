@@ -13,7 +13,7 @@ export class MemberDetailComponent implements OnInit {
 
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
-  
+
   member: Member
 
   constructor(private memberService: MembersService, private activatedRoute: ActivatedRoute) { }
@@ -23,7 +23,7 @@ export class MemberDetailComponent implements OnInit {
 
     this.galleryOptions = [
       {
-        width: '600px',
+        width: '400px',
         height: '400px',
         thumbnailsColumns: 4,
         imageAnimation: NgxGalleryAnimation.Slide
@@ -45,7 +45,6 @@ export class MemberDetailComponent implements OnInit {
       }
     ];
 
-    this.galleryImages = this.getImages();
   }
 
   getImages(): NgxGalleryImage[] {
@@ -53,20 +52,26 @@ export class MemberDetailComponent implements OnInit {
     for (const photo of this.member.photos) {
       imageUrls.push({
         small: photo?.url,
-        medium:photo?.url,
-        big:photo?.url,
+        medium: photo?.url,
+        big: photo?.url,
       })
     }
 
+    imageUrls && imageUrls.push({
+      small: './assets/user.png',
+      medium: './assets/user.png',
+      big: './assets/user.png',
+    });
+    
     return imageUrls;
 
   }
-  loadMember(){
+  loadMember() {
     this.memberService.getMember(this.activatedRoute.snapshot.paramMap.get('username')).subscribe(
       res => {
         this.member = res
+        this.galleryImages = this.getImages();
       }
     )
   }
-
 }

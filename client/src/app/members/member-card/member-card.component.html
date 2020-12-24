@@ -4,7 +4,7 @@
       <h5 class="card-title">Special title treatment</h5>
       <h6 class="card-subtitle text-muted">Support card subtitle</h6>
     </div> -->
-    <img [src]=member.photoUrl width="100%" height="150px">
+    <img src="{{member.photoUrl || './assets/user.png'}}" width="100%" height="150px">
     <div class="btn-group" role="group" aria-label="Basic example">
         <button routerLink="/members/{{member.username}}" type="button" class="btn btn-sm btn-primary m-1"><i class="fa fa-user"></i></button>
         <button type="button" class="btn btn-sm btn-primary m-1"><i class="fa fa-heart"></i></button>
