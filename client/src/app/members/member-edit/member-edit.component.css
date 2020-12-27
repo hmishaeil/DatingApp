@@ -1,0 +1,9 @@
+.thumbnail {
+    padding: 1em;
+}
+
+.ngx-gallery { display: inline-block; margin-bottom: 20px; }
+[ng-cloak]
+{
+  display: none !important;
+}

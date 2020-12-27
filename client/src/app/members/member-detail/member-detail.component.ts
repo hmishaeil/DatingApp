@@ -57,12 +57,12 @@ export class MemberDetailComponent implements OnInit {
       })
     }
 
-    imageUrls && imageUrls.push({
+    imageUrls.length == 0 && imageUrls.push({
       small: './assets/user.png',
       medium: './assets/user.png',
       big: './assets/user.png',
     });
-    
+
     return imageUrls;
 
   }

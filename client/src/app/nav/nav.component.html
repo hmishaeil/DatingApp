@@ -22,7 +22,7 @@
                 <button class="btn btn-primary dropdown-toggle" href="#" role="button" aria-haspopup="true"
                     aria-expanded="false" dropdownToggle>Welcome {{user.username | titlecase}}</button>
                 <div class="dropdown-menu" *dropdownMenu>
-                    <a class="dropdown-item" href="#">Edit Profile</a>
+                    <a class="dropdown-item" routerLink="/member/edit">Edit Profile</a>
                     <li class="divider dropdown-divider"></li>
                     <a class="dropdown-item" href="#" (click)="logout()">Log out</a>
                 </div>
