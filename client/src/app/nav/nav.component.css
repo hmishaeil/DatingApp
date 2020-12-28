@@ -1,0 +1,7 @@
+.profile-picture{
+    max-width: 40px;
+    max-height: 40px;
+    margin-right: 5px;
+    border: solid 2px whitesmoke;
+    border-radius: 55%;
+}
