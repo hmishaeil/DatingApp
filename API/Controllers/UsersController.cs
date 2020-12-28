@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Extensions;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,10 +20,14 @@ namespace API.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _iMapper;
-        public UsersController(IUserRepository userRepository, IMapper iMapper)
+        private readonly IPhotoService _iPhotoService;
+        public UsersController(IUserRepository userRepository,
+        IMapper iMapper,
+        IPhotoService iPhotoService)
         {
             _userRepository = userRepository;
             _iMapper = iMapper;
+            _iPhotoService = iPhotoService;
         }
 
         [HttpGet]
@@ -31,23 +37,77 @@ namespace API.Controllers
             return Ok(users);
         }
 
-        [HttpGet("{username}")]
+        [HttpGet("{username}", Name = "GetUser")]
         public async Task<ActionResult<MemberDTO>> GetUser(string username)
         {
             return await _userRepository.GetMemberAsync(username);
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateUser(MemberUpdateDTO memberUpdateDTO){
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        public async Task<ActionResult> UpdateUser(MemberUpdateDTO memberUpdateDTO)
+        {
+
+            var username = User.GetUsername();
             var user = await _userRepository.GetUserByUsernameAsync(username);
             _iMapper.Map(memberUpdateDTO, user);
 
             _userRepository.Update(user);
 
-           if(await _userRepository.SaveAllAsync()) return NoContent();
+            if (await _userRepository.SaveAllAsync()) return NoContent();
 
             return BadRequest("Failed to save the user.");
+        }
+
+        [HttpPost("add-photo")]
+        public async Task<ActionResult<PhotoDTO>> AddPhoto(IFormFile file)
+        {
+            var username = User.GetUsername(); // User class extention
+            var user = await _userRepository.GetUserByUsernameAsync(username);
+            var result = await _iPhotoService.AddPhotoAsync(file);
+
+            if (result.Error != null) return BadRequest(result.Error.Message);
+
+            var photo = new Photo
+            {
+                Url = result.SecureUrl.AbsoluteUri,
+                PublicId = result.PublicId
+            };
+
+            if (user.Photos.Count == 0)
+            {
+                photo.IsMain = true;
+            }
+
+            user.Photos.Add(photo);
+
+            if (await _userRepository.SaveAllAsync())
+            {
+                // return _iMapper.Map<PhotoDTO>(photo);
+                // return CreatedAtRoute("GetUser", _iMapper.Map<PhotoDTO>(photo));
+                return CreatedAtRoute("GetUser", new
+                {
+                    username = user.UserName
+                }, _iMapper.Map<PhotoDTO>(photo));
+            }
+            return BadRequest("Something went wrong while adding photos!");
+        }
+
+        [HttpPut("set-main-photo/{photoId}")]
+        public async Task<ActionResult> SetMainPhoto(int photoId){
+            var username = User.GetUsername();
+            var user = await _userRepository.GetUserByUsernameAsync(username);
+            var photo = user.Photos.FirstOrDefault(photo => photo.Id == photoId);
+
+            if(photo.IsMain) return BadRequest("The photo is already main photo");
+
+            var currentMain = user.Photos.FirstOrDefault(photo => photo.IsMain == true);
+            if (currentMain != null) currentMain.IsMain = false;
+
+            photo.IsMain = true;
+
+            if(await _userRepository.SaveAllAsync()) return NoContent();
+
+            return BadRequest("Failed to set main photo.");
         }
     }
 }
