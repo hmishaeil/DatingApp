@@ -19,11 +19,12 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
       catchError((err) => {
+        console.log('*** ERROR DETECTED IN INTERCEPTOR ***')
+        console.log(err)
         switch (err.status) {
           case 400:
             console.log('400 detected'!)
             if(err.error.errors){
-
               for(const k in err.error.errors){
                 if(err.error.errors[k]){
                   this.validationErrors.push(err.error.errors[k])

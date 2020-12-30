@@ -16,12 +16,12 @@ import { environment } from 'src/environments/environment';
 export class PhotoEditorComponent implements OnInit {
 
   @Input() member: Member;
-  uploader: FileUploader 
+  uploader: FileUploader
   hasBaseDropZoneOver: boolean
   baseUrl: string = environment.apiUrl
   user: User
 
-  constructor(private accountService: AccountService, private memberService: MembersService) { 
+  constructor(private accountService: AccountService, private memberService: MembersService) {
     this.accountService.userResource$.pipe(take(1)).subscribe(res => this.user = res)
   }
 
@@ -29,11 +29,11 @@ export class PhotoEditorComponent implements OnInit {
     this.initUploader()
   }
 
-  fileOverBase(e: any){
+  fileOverBase(e: any) {
     this.hasBaseDropZoneOver = e
   }
 
-  initUploader(){
+  initUploader() {
     this.uploader = new FileUploader({
       url: this.baseUrl + 'users/add-photo',
       authToken: 'Bearer ' + this.user.token,
@@ -49,20 +49,27 @@ export class PhotoEditorComponent implements OnInit {
     }
 
     this.uploader.onSuccessItem = (item, response, status, header) => {
-      if(response){
-        const photo = JSON.parse(response)
+      if (response) {
+        const photo: Photo = JSON.parse(response)
         this.member.photos.push(photo)
+        if (photo.isMain) {
+          this.member.photoUrl = photo.url
+
+          this.user.photoUrl = photo.url
+          this.accountService.setCurrentUser(this.user)
+        }
+
       }
     }
   }
 
-  setMainPhoto(photo: Photo){
+  setMainPhoto(photo: Photo) {
     this.memberService.setMainPhoto(photo.id).subscribe(
       () => {
         this.member.photos.forEach(
           (p) => {
             if (p.isMain) p.isMain = false
-            if(p.id === photo.id) { 
+            if (p.id === photo.id) {
               p.isMain = true
               this.user.photoUrl = p.url
               this.accountService.setCurrentUser(this.user)
@@ -75,7 +82,7 @@ export class PhotoEditorComponent implements OnInit {
     )
   }
 
-  deletePhoto(photo: Photo){
+  deletePhoto(photo: Photo) {
     this.memberService.deletePhoto(photo.id).subscribe(
       () => {
         this.member.photos = this.member.photos.filter(p => p.id !== photo.id)

@@ -19,7 +19,7 @@
                 </li>
             </ul>
             <div class="nav-item dropdown" dropdown *ngIf="(accountService.userResource$ | async) as user">
-                <img [src]="user.photoUrl" alt="user.photoUrl" class="profile-picture">
+                <img [src]="user.photoUrl || './assets/user.png'" alt="user.photoUrl" class="profile-picture">
                 <button class="btn btn-primary dropdown-toggle btn-sm" href="#" role="button" aria-haspopup="true"
                     aria-expanded="false" dropdownToggle>Welcome {{user.username | titlecase}}</button>
                 <div class="dropdown-menu" *dropdownMenu>

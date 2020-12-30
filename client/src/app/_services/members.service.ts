@@ -26,7 +26,8 @@ export class MembersService {
 
   getMembers(){
 
-    if(this.members.length > 0) return of(this.members);
+    // TODO: Avoid the back-end call for caching mechanism
+    // if(this.members.length > 0) return of(this.members);
 
     return this.httpClient.get<Member[]>(this.baseUrl + 'users').pipe(
       map(

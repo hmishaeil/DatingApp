@@ -1,4 +1,4 @@
-<form [formGroup]="registerForm" (ngSubmit)="onRegisterSubmit()" autocomplete="off">
+<form [formGroup]="registerForm" (ngSubmit)="registerForm.valid && onRegisterSubmit()" autocomplete="off">
   <h1 class="text-primary">Sign Up</h1>
   <hr>
   <div class="form-group">
@@ -20,9 +20,15 @@
   <app-text-input [label]="'Confirm Password'" [formControl]="registerForm.controls['confirmPassword']"
     [type]="'password'"></app-text-input>
 
-    <div class="mb-5">
-      <button type="submit" class="btn btn-primary mr-2">Submit</button>
-      <button type="button" class="btn btn-danger" (click)="onRegisterCancel()">Cancel</button>
-    </div>
+  <ul *ngIf="errors.length">
+    <li class="text-danger" *ngFor="let error of errors">
+      {{error}}
+    </li>
+  </ul>
+
+  <div class="mb-5">
+    <button type="submit" [disabled]="registerForm.invalid" class="btn btn-primary mr-2">Submit</button>
+    <button type="button" class="btn btn-danger" (click)="onRegisterCancel()">Cancel</button>
+  </div>
 
 </form>

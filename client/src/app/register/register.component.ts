@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AccountService } from '../_services/account.service';
 
@@ -16,8 +17,11 @@ export class RegisterComponent implements OnInit {
   model: any = {};
   validationErrors = []
   registerForm: FormGroup
+  errors: string[] = [] // Init the variable, otherwise getting undefined var
 
-  constructor(private accountService: AccountService, private toastr: ToastrService, private fb: FormBuilder) { }
+  constructor(private accountService: AccountService, private toastr: ToastrService, 
+    private router: Router,
+    private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.initForm()
@@ -29,7 +33,7 @@ export class RegisterComponent implements OnInit {
       username: new FormControl('', Validators.required),
       gender: new FormControl('male'),
       knownAs: new FormControl('', Validators.required),
-      dateOfBirth: new FormControl('', Validators.required),
+      dateOfBirth: new FormControl(null, Validators.required),
       city: new FormControl('', Validators.required),
       country: new FormControl('', Validators.required),
       password: new FormControl('', [Validators.required, Validators.minLength(4), Validators.maxLength(8)]),
@@ -46,9 +50,12 @@ export class RegisterComponent implements OnInit {
   onRegisterSubmit() {
     this.accountService.register(this.registerForm.value).subscribe((res) => {
       this.toastr.info('user registered successfully!');
-      console.log(res)
+      this.router.navigateByUrl('members')
+    }, (err) => {
+      // Catch and handle the back-end errors 
+      this.errors = err
+
     });
-    console.log(this.registerForm)
   }
   onRegisterCancel() {
     this.outputFromRegisterComponent.emit(false);

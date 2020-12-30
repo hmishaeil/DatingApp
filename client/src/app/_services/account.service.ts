@@ -44,7 +44,7 @@ export class AccountService {
 
   setCurrentUser(user: User){
     localStorage.setItem('user', JSON.stringify(user));
-    this.userResource.next(user)
+    this.userResource.next(user) // Call the next to trigger the event, otherwise the subscribers won't be noticed.
   }
   
   logout(){
