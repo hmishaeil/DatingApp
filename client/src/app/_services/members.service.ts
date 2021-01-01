@@ -6,6 +6,7 @@ import { ignoreElements, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Member } from '../_models/Member';
 import { PaginatedResult } from '../_models/pagination';
+import { UserParams } from '../_models/userParams';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -21,50 +22,49 @@ export class MembersService {
 
   baseUrl = environment.apiUrl
   members: Member[] = []
-  paginatedResult: PaginatedResult<Member[]> = new PaginatedResult<Member[]>()
 
-  constructor(private httpClient: HttpClient) { 
+  constructor(private httpClient: HttpClient) {
   }
 
-  getMembers(page?: number, itemsPerPage?: number){
+  getMembers(userParams: UserParams) {
 
-    // if(this.members.length > 0) return of(this.members);
+    // Create the query string parameters to be consumed by back-end 
     let params = new HttpParams()
+    params = params.append("PageNumber", userParams.pageNumber.toString());
+    params = params.append("PageSize", userParams.pageSize.toString());
+    params = params.append("Gender", userParams.gender.toString());
+    params = params.append("MinAge", userParams.minAge.toString());
+    params = params.append("MaxAge", userParams.maxAge.toString());
 
-    if(page !== null && itemsPerPage !== null){
-      params = params.append("PageNumber", page.toString())
-      params = params.append("PageSize", itemsPerPage.toString())
-    }
-     
-    return this.httpClient.get<Member[]>(this.baseUrl + 'users', {observe: 'response', params}).pipe(
+    return this.getPaginatedResult<Member[]>(this.baseUrl + 'users', params);
+  }
+
+  private getPaginatedResult<T>(url: string, params: HttpParams) {
+
+    let paginatedResult: PaginatedResult<T> = new PaginatedResult<T>()
+
+    return this.httpClient.get<T>(url, { observe: 'response', params }).pipe(
       map(response => {
-        this.paginatedResult.result = response.body
-        if(response.headers.get("Pagination") !== null){
-          this.paginatedResult.pagination = JSON.parse(response.headers.get("Pagination"))
+        paginatedResult.result = response.body;
+        if (response.headers.get("Pagination") !== null) {
+          paginatedResult.pagination = JSON.parse(response.headers.get("Pagination"));
         }
-        return this.paginatedResult;
-      }
-      )
-      // map(
-      //   res => {
-      //     this.members = res
-      //     return this.members
-      //   }
-      // )
+        return paginatedResult;
+      })
     );
   }
 
-  getMember(username: string){
+  getMember(username: string) {
 
     const member = this.members.find(member => member.username === username)
-    if(member === undefined) {
+    if (member === undefined) {
       return this.httpClient.get<Member>(this.baseUrl + 'users/' + username, httpOptions);
     } else {
       return of(member)
     }
   }
 
-  updateMember(member: Member){
+  updateMember(member: Member) {
     return this.httpClient.put(this.baseUrl + 'users', member).pipe(
       map(() => {
         const index = this.members.indexOf(member)
@@ -73,11 +73,11 @@ export class MembersService {
     )
   }
 
-  setMainPhoto(photoId: number){
+  setMainPhoto(photoId: number) {
     return this.httpClient.put(this.baseUrl + 'users/set-main-photo/' + photoId, {})
   }
 
-  deletePhoto(photoId: number){
+  deletePhoto(photoId: number) {
     return this.httpClient.delete(this.baseUrl + 'users/delete-photo/' + photoId);
   }
 }
