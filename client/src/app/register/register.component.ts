@@ -3,6 +3,7 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Vali
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AccountService } from '../_services/account.service';
+import { MembersService } from '../_services/members.service';
 
 @Component({
   selector: 'app-register',
@@ -21,6 +22,7 @@ export class RegisterComponent implements OnInit {
 
   constructor(private accountService: AccountService, private toastr: ToastrService, 
     private router: Router,
+    private memberService: MembersService,
     private fb: FormBuilder) { }
 
   ngOnInit(): void {
@@ -50,7 +52,11 @@ export class RegisterComponent implements OnInit {
   onRegisterSubmit() {
     this.accountService.register(this.registerForm.value).subscribe((res) => {
       this.toastr.info('user registered successfully!');
+
+      this.memberService.members.push(this.registerForm.value)
       this.router.navigateByUrl('members')
+
+
     }, (err) => {
       // Catch and handle the back-end errors 
       this.errors = err

@@ -6,6 +6,7 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -31,9 +32,11 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MemberDTO>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<MemberDTO>>> GetUsers([FromQuery] UserParams userParams)
         {
-            var users = await _userRepository.GetMembersAsync();
+            // var users = await _userRepository.GetMembersAsync();
+            var users = await _userRepository.GetMembersAsync(userParams);
+            Response.AddPaginationHeader(users.CurrentPage, users.TotalPages, users.PageSize, users.TotalCount);
             return Ok(users);
         }
 
@@ -93,39 +96,43 @@ namespace API.Controllers
         }
 
         [HttpPut("set-main-photo/{photoId}")]
-        public async Task<ActionResult> SetMainPhoto(int photoId){
+        public async Task<ActionResult> SetMainPhoto(int photoId)
+        {
             var username = User.GetUsername();
             var user = await _userRepository.GetUserByUsernameAsync(username);
             var photo = user.Photos.FirstOrDefault(photo => photo.Id == photoId);
 
-            if(photo.IsMain) return BadRequest("The photo is already main photo");
+            if (photo.IsMain) return BadRequest("The photo is already main photo");
 
             var currentMain = user.Photos.FirstOrDefault(photo => photo.IsMain == true);
             if (currentMain != null) currentMain.IsMain = false;
 
             photo.IsMain = true;
 
-            if(await _userRepository.SaveAllAsync()) return NoContent();
+            if (await _userRepository.SaveAllAsync()) return NoContent();
 
             return BadRequest("Failed to set main photo.");
         }
 
         [HttpDelete("delete-photo/{photoId}")]
-        public async Task<ActionResult> DeletePhoto(int photoId){
+        public async Task<ActionResult> DeletePhoto(int photoId)
+        {
             var username = User.GetUsername();
             var user = await _userRepository.GetUserByUsernameAsync(username);
             var photo = user.Photos.FirstOrDefault(photo => photo.Id == photoId);
 
-            if(photo == null) return NotFound();
-            if(photo.IsMain) return BadRequest("The main photo can not be deleted");
-            if(photo.PublicId != null) {
+            if (photo == null) return NotFound();
+            if (photo.IsMain) return BadRequest("The main photo can not be deleted");
+            if (photo.PublicId != null)
+            {
                 var result = await _iPhotoService.DeletePhotoAsync(photo.PublicId);
-                if(result.Error != null) return BadRequest(result.Error.Message);
+                if (result.Error != null) return BadRequest(result.Error.Message);
             }
 
             user.Photos.Remove(photo); // Just adding the tracking flag
 
-            if(await _userRepository.SaveAllAsync()){
+            if (await _userRepository.SaveAllAsync())
+            {
                 return Ok();
             }
 
