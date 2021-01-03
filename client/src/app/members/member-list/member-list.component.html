@@ -28,14 +28,24 @@
             <button class="btn-outline-info ml-3" type="submit" (click)="resetFilters()">
                 Reset Filters
             </button>
-            <button class="btn-primary ml-3" type="button" name="orderBy" (click)="loadMembers()"
-                [(ngModel)]="userParams.orderBy" btnRadio="lastActive">
-                Order by Last Active
-            </button>
-            <button class="btn-primary" type="button" name="orderBy" (click)="loadMembers()"
-                [(ngModel)]="userParams.orderBy" btnRadio="created">
-                Order by Newest Member
-            </button>
+
+            <div class="btn-group ml-5" dropdown>
+                <button id="button-basic" dropdownToggle type="button" class="btn btn-sm btn-primary dropdown-toggle"
+                    aria-controls="dropdown-basic">
+                    Order By <span class="caret"></span>
+                </button>
+                <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="button-basic">
+                    <li role="menuitem"><button class="dropdown-item" type="button" name="orderBy"
+                            (click)="loadMembers()" [(ngModel)]="userParams.orderBy" btnRadio="lastActive">Last
+                            Active</button>
+                    </li>
+                    <li role="menuitem"> <button class="dropdown-item" type="button" name="orderBy"
+                            (click)="loadMembers()" [(ngModel)]="userParams.orderBy" btnRadio="created">
+                            Newest Member
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </form>
     </div>
     <div class="row">
