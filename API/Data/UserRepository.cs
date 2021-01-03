@@ -38,17 +38,17 @@ namespace API.Data
             var query = _dataContext.Users.AsQueryable()
                                           .Where(user => user.UserName != userParams.CurrentUsername)
                                           .Where(user => user.Gender == userParams.Gender)
-                                          .Where(user => user.DateOfBirth >= minDob && user.DateOfBirth <= maxDob)
-                                          .ProjectTo<MemberDTO>(_iMapper.ConfigurationProvider)
-                                          .AsNoTracking();
+                                          .Where(user => user.DateOfBirth >= minDob && user.DateOfBirth <= maxDob);
 
-            return await PagedList<MemberDTO>.CreateAsync(query, userParams.PageNumber, userParams.PageSize);
+            query = userParams.OrderBy switch {
+                "created" => query.OrderByDescending(u => u.CreatedAt),
+                _ => query.OrderBy(u => u.LastActive)
+            };
+
+            return await PagedList<MemberDTO>.CreateAsync(
+                query.ProjectTo<MemberDTO>(_iMapper.ConfigurationProvider).AsNoTracking(), 
+                userParams.PageNumber, userParams.PageSize);
         }
-
-        // public async Task<IEnumerable<MemberDTO>> GetMembersAsync()
-        // {
-        //     return await _dataContext.Users.ProjectTo<MemberDTO>(_iMapper.ConfigurationProvider).ToListAsync();
-        // }
 
         public async Task<AppUser> GetUserByIdAsync(int id)
         {

@@ -28,6 +28,14 @@
             <button class="btn-outline-info ml-3" type="submit" (click)="resetFilters()">
                 Reset Filters
             </button>
+            <button class="btn-primary ml-3" type="button" name="orderBy" (click)="loadMembers()"
+                [(ngModel)]="userParams.orderBy" btnRadio="lastActive">
+                Order by Last Active
+            </button>
+            <button class="btn-primary" type="button" name="orderBy" (click)="loadMembers()"
+                [(ngModel)]="userParams.orderBy" btnRadio="created">
+                Order by Newest Member
+            </button>
         </form>
     </div>
     <div class="row">
