@@ -1,1 +1,27 @@
-<p>lists works!</p>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-6">
+            <h3>{{likeParams.predicate === "liked" ? "Liked" : "Liked By"}}</h3>
+        </div>
+        <div class="col-6 text-right">
+            <div class="btn-group">
+                <button (click)="loadMembers()" class="btn btn-sm btn-primary" [(ngModel)]="likeParams.predicate"
+                    btnRadio="liked">Show Liked</button>
+                <button (click)="loadMembers()" class="btn btn-sm btn-primary" [(ngModel)]="likeParams.predicate"
+                    btnRadio="likedBy">Show Liked By</button>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div *ngFor="let member of members" class="col-2">
+            <app-member-card [member]="member"></app-member-card>
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-center" *ngIf="pagination">
+        <pagination [boundaryLinks]="true" [totalItems]="pagination.totalItems" [itemsPerPage]="pagination.itemsPerPage"
+            [(ngModel)]="pagination.currentPage" (pageChanged)="pageChanged($event)" previousText="&lsaquo;"
+            nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+        </pagination>
+    </div>
+</div>

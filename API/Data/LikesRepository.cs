@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,38 +22,42 @@ namespace API.Data
             return await _dataContext.Likes.FindAsync(sourceUserId, likedUserId);
         }
 
-        public async Task<IEnumerable<LikeDTO>> GetUserLikes(string predicate, int userId)
+        public async Task<PagedList<LikeDTO>> GetUserLikes(LikeParams likeParams)
         {
             var users = _dataContext.Users.OrderBy(user => user.UserName).AsQueryable();
             var likes = _dataContext.Likes.AsQueryable();
 
-            if (predicate == "the_users_that_i_liked")
+            // Joining the tables
+            if (likeParams.Predicate == "liked")
             {
-                likes = likes.Where(like => like.SourceUserId == userId);
+                likes = likes.Where(like => like.SourceUserId == likeParams.UserId);
                 users = likes.Select(like => like.LikedUser);
             }
 
-            if (predicate == "the_users_that_liked_me")
+            if (likeParams.Predicate == "likedBy")
             {
-                likes = likes.Where(like => like.LikedUserId == userId);
+                likes = likes.Where(like => like.LikedUserId == likeParams.UserId);
                 users = likes.Select(like => like.SourceUser);
             }
 
-            return await users.Select(user => new LikeDTO{
+            var likedUser = users.Select(user => new LikeDTO // Project the user data to DTO 
+            {
                 Username = user.UserName,
                 KnownAs = user.KnownAs,
                 Age = user.DateOfBirth.CalcAge(),
                 PhotoUrl = user.Photos.FirstOrDefault(photo => photo.IsMain).Url,
                 City = user.City,
                 Id = user.Id
-            }).ToListAsync();
+            });
+
+            return await PagedList<LikeDTO>.CreateAsync(likedUser, likeParams.PageNumber, likeParams.PageSize);
 
         }
 
         public async Task<AppUser> GetUserWithLikes(int userId)
         {
             return await _dataContext.Users
-                                     .Include(user => user.TheUserThat_ILiked_Collection)
+                                     .Include(user => user.LikedUsers)
                                      .FirstOrDefaultAsync(user => user.Id == userId);
         }
     }

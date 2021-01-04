@@ -24,16 +24,17 @@ export class ErrorInterceptor implements HttpInterceptor {
         switch (err.status) {
           case 400:
             console.log('400 detected'!)
-            if(err.error.errors){
-              for(const k in err.error.errors){
-                if(err.error.errors[k]){
+            if (err.error.errors) {
+              for (const k in err.error.errors) {
+                if (err.error.errors[k]) {
                   this.validationErrors.push(err.error.errors[k])
                 }
               }
-
-              throw(this.validationErrors.flat());
-            } else{
-              this.toastr.error('bad request! - todo')
+              throw (this.validationErrors.flat());
+            } else if (typeof(err.error) === 'object'){
+              this.toastr.error(err.error.title)
+            } else {
+              this.toastr.error(err.error)
             }
             break;
           case 401:

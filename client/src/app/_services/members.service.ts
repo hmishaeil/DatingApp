@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { Observable } from 'rxjs';
 import { ignoreElements, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { LikeParams } from '../_models/likeParams';
 import { Member } from '../_models/Member';
 import { PaginatedResult } from '../_models/pagination';
 import { UserParams } from '../_models/userParams';
@@ -26,20 +27,6 @@ export class MembersService {
   constructor(private httpClient: HttpClient) {
   }
 
-  getMembers(userParams: UserParams) {
-
-    // Create the query string parameters to be consumed by back-end 
-    let params = new HttpParams()
-    params = params.append("PageNumber", userParams.pageNumber.toString());
-    params = params.append("PageSize", userParams.pageSize.toString());
-    params = params.append("Gender", userParams.gender.toString());
-    params = params.append("MinAge", userParams.minAge.toString());
-    params = params.append("MaxAge", userParams.maxAge.toString());
-    params = params.append("OrderBy", userParams.orderBy.toString());
-
-    return this.getPaginatedResult<Member[]>(this.baseUrl + 'users', params);
-  }
-
   private getPaginatedResult<T>(url: string, params: HttpParams) {
 
     let paginatedResult: PaginatedResult<T> = new PaginatedResult<T>()
@@ -53,6 +40,20 @@ export class MembersService {
         return paginatedResult;
       })
     );
+  }
+
+  getMembers(userParams: UserParams) {
+
+    // Create the query string parameters to be consumed by back-end 
+    let params = new HttpParams()
+    params = params.append("PageNumber", userParams.pageNumber.toString());
+    params = params.append("PageSize", userParams.pageSize.toString());
+    params = params.append("Gender", userParams.gender.toString());
+    params = params.append("MinAge", userParams.minAge.toString());
+    params = params.append("MaxAge", userParams.maxAge.toString());
+    params = params.append("OrderBy", userParams.orderBy.toString());
+
+    return this.getPaginatedResult<Member[]>(this.baseUrl + 'users', params);
   }
 
   getMember(username: string) {
@@ -80,5 +81,20 @@ export class MembersService {
 
   deletePhoto(photoId: number) {
     return this.httpClient.delete(this.baseUrl + 'users/delete-photo/' + photoId);
+  }
+
+  addLike(username: string) {
+    return this.httpClient.post(this.baseUrl + 'likes/' + username, {});
+  }
+
+  getLikes(likeParams: LikeParams) {
+
+    let params = new HttpParams()
+    params = params.append("PageNumber", likeParams.pageNumber.toString());
+    params = params.append("PageSize", likeParams.pageSize.toString());
+    params = params.append("Predicate", likeParams.predicate);
+
+    return this.getPaginatedResult<Partial<Member[]>>(this.baseUrl + 'likes', params);
+
   }
 }

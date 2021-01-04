@@ -3,7 +3,7 @@
   <div class="btn-group" role="group">
     <button routerLink="/members/{{member.username}}" type="button" class="btn btn-sm btn-primary m-1"><i
         class="fa fa-user"></i></button>
-    <button type="button" class="btn btn-sm btn-primary m-1"><i class="fa fa-heart"></i></button>
+    <button type="button" class="btn btn-sm btn-primary m-1" (click)="addLike(member)"><i class="fa fa-heart"></i></button>
     <button type="button" class="btn btn-sm btn-primary m-1"><i class="fa fa-envelope"></i></button>
   </div>
   <div class="card-body text-center">

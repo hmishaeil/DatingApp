@@ -5,30 +5,30 @@ namespace API.Data
 {
     public class DataContext : DbContext
     {
-        public DataContext(DbContextOptions options) : base(options)
-        {
-
-        }
+        public DataContext(DbContextOptions options) : base(options) { }
         public DbSet<AppUser> Users { get; set; }
-        public DbSet<UserLike> Likes { get; set; }
+        public DbSet<UserLike> Likes { get; set; } // Table name
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<UserLike>().HasKey(k => new {
+            modelBuilder.Entity<UserLike>().HasKey(k => new
+            {
                 k.SourceUserId,
                 k.LikedUserId
             });
 
             modelBuilder.Entity<UserLike>().
-                HasOne(s => s.SourceUser).
-                WithMany(l => l.TheUserThat_ILiked_Collection).HasForeignKey(s => s.SourceUserId).
+                HasOne(user => user.SourceUser).
+                WithMany(like => like.LikedUsers).
+                HasForeignKey(key => key.SourceUserId).
                 OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<UserLike>().
-                HasOne(s => s.LikedUser).
-                WithMany(l => l.TheUsersThat_LikedMe_Collection).HasForeignKey(s => s.LikedUserId).
+                HasOne(user => user.LikedUser).
+                WithMany(like => like.LikedByUsers).
+                HasForeignKey(key => key.LikedUserId).
                 OnDelete(DeleteBehavior.Cascade);
         }
     }

@@ -27,7 +27,6 @@ export class MemberListComponent implements OnInit {
   constructor(private accountService: AccountService, private membersService: MembersService) {
     this.accountService.userResource$.pipe(take(1)).subscribe(res => this.user = res);
     this.userParams = new UserParams(this.user);
-
   }
 
   ngOnInit(): void {
