@@ -40,6 +40,7 @@ export class MemberListComponent implements OnInit {
   }
 
   loadMembers() {
+    console.log(Object.values(this.userParams).join(' + '));
     this.membersService.getMembers(this.userParams).subscribe(
       response => {
         this.members = response.result
