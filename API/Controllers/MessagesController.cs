@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Interfaces;
+using API.Params;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,10 +48,30 @@ namespace API.Controllers
 
             _messageRepository.AddMessage(message);
 
-            if (await _messageRepository.SaveAllAsync()) return Ok(_mapper.Map<MessageDTO>(message));
+            if (await _messageRepository.SaveAllAsync()) return Ok(_mapper.Map<MessageDTO>(message)); // Return mapped MessageDTO from message 
 
             return BadRequest("Failed to create the message!");
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessagesForUser([FromQuery] MessageParams messageParams)
+        {
+            messageParams.Username = User.GetUsername();
+
+            var messages = await _messageRepository.GetMessagesForUser(messageParams);
+
+            Response.AddPaginationHeader(messages.CurrentPage, messages.TotalPages, messages.PageSize, messages.TotalCount);
+
+            return messages;
+        }
+
+        [HttpGet("thread/{other_username}")]
+        public async Task<ActionResult<IEnumerable<MemberDTO>>> GetMessageThread(string otherUsername)
+        {
+            var currentUsername = User.GetUsername(); // The logged in username
+
+            var messageThread = await _messageRepository.GetMessageThread(currentUsername, otherUsername);
+            return Ok(messageThread);
+        }
     }
 }

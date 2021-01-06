@@ -8,10 +8,10 @@ namespace API.Entities
 
         public int SenderId { get; set; }
         public string SenderUsername { get; set; }
-        public AppUser Sender { get; set; }
+        public AppUser Sender { get; set; } // Related Property
         public int ReceiverId { get; set; }
         public string ReceiverUsername { get; set; }
-        public AppUser Receiver { get; set; }
+        public AppUser Receiver { get; set; } // Related Property
 
         public string Content { get; set; }
         public DateTime? MessageReadDate { get; set; }
