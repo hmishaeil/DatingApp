@@ -8,11 +8,13 @@ namespace API.Data
         public DataContext(DbContextOptions options) : base(options) { }
         public DbSet<AppUser> Users { get; set; }
         public DbSet<UserLike> Likes { get; set; } // Table name
+        public DbSet<Message> Messages {get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            // UserLike - ManyToMany Relationship
             modelBuilder.Entity<UserLike>().HasKey(k => new
             {
                 k.SourceUserId,
@@ -30,6 +32,17 @@ namespace API.Data
                 WithMany(like => like.LikedByUsers).
                 HasForeignKey(key => key.LikedUserId).
                 OnDelete(DeleteBehavior.Cascade);
+
+            // Messages - OneToMany Relationship
+            modelBuilder.Entity<Message>().
+                HasOne(user => user.Receiver).
+                WithMany(message => message.ReceivedMessages).
+                OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Message>().
+                HasOne(user => user.Sender).
+                WithMany(message => message.SentMessages).
+                OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
