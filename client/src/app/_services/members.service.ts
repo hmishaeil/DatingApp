@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { Observable } from 'rxjs';
 import { ignoreElements, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { getPaginatedResult, getPaginationHeader } from '../_helpers/pagination.helper';
 import { LikeParams } from '../_models/likeParams';
 import { Member } from '../_models/Member';
 import { PaginatedResult } from '../_models/pagination';
@@ -27,33 +28,16 @@ export class MembersService {
   constructor(private httpClient: HttpClient) {
   }
 
-  private getPaginatedResult<T>(url: string, params: HttpParams) {
-
-    let paginatedResult: PaginatedResult<T> = new PaginatedResult<T>()
-
-    return this.httpClient.get<T>(url, { observe: 'response', params }).pipe(
-      map(response => {
-        paginatedResult.result = response.body;
-        if (response.headers.get("Pagination") !== null) {
-          paginatedResult.pagination = JSON.parse(response.headers.get("Pagination"));
-        }
-        return paginatedResult;
-      })
-    );
-  }
-
   getMembers(userParams: UserParams) {
 
-    // Create the query string parameters to be consumed by back-end 
-    let params = new HttpParams()
-    params = params.append("PageNumber", userParams.pageNumber.toString());
-    params = params.append("PageSize", userParams.pageSize.toString());
+    let params = getPaginationHeader(userParams.pageNumber, userParams.pageSize);
+
     params = params.append("Gender", userParams.gender.toString());
     params = params.append("MinAge", userParams.minAge.toString());
     params = params.append("MaxAge", userParams.maxAge.toString());
     params = params.append("OrderBy", userParams.orderBy.toString());
 
-    return this.getPaginatedResult<Member[]>(this.baseUrl + 'users', params);
+    return getPaginatedResult<Member[]>(this.baseUrl + 'users', params, this.httpClient);
   }
 
   getMember(username: string) {
@@ -89,12 +73,9 @@ export class MembersService {
 
   getLikes(likeParams: LikeParams) {
 
-    let params = new HttpParams()
-    params = params.append("PageNumber", likeParams.pageNumber.toString());
-    params = params.append("PageSize", likeParams.pageSize.toString());
+    let params = getPaginationHeader(likeParams.pageNumber, likeParams.pageSize);
     params = params.append("Predicate", likeParams.predicate);
-
-    return this.getPaginatedResult<Partial<Member[]>>(this.baseUrl + 'likes', params);
+    return getPaginatedResult<Partial<Member[]>>(this.baseUrl + 'likes', params, this.httpClient);
 
   }
 }

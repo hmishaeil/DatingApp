@@ -1,8 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace API.DTOs
 {
     public class CreateMessageDTO
     {
-        public string ReceiverUsername { get; set; }
-        public string Content { get; set; }
+        
+        [Required] public string ReceiverUsername { get; set; }
+        [Required] public string Content { get; set; }
     }
 }
