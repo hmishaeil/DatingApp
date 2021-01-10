@@ -39,6 +39,7 @@ export class MemberListComponent implements OnInit {
   }
 
   loadMembers() {
+    //TODO: Cache the data to avoid unnecessary api calls to get a specific user
     console.log(Object.values(this.userParams).join(' + '));
     this.membersService.getMembers(this.userParams).subscribe(
       response => {

@@ -76,6 +76,9 @@ export class MembersService {
     let params = getPaginationHeader(likeParams.pageNumber, likeParams.pageSize);
     params = params.append("Predicate", likeParams.predicate);
     return getPaginatedResult<Partial<Member[]>>(this.baseUrl + 'likes', params, this.httpClient);
+  }
 
+  sendMessage(){
+    
   }
 }

@@ -4,6 +4,7 @@ namespace API.DTOs
 {
     public class MessageDTO
     {
+        public int Id { get; set;}
         public int SenderId { get; set; }
         public string SenderUsername { get; set; }
         public string SenderPhotoUrl { get; set; }

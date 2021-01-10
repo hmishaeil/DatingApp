@@ -3,11 +3,11 @@
         <div class="col">
             <div class="btn-group">
                 <button (click)="loadMessages()" class="btn btn-sm btn-primary" [(ngModel)]="messageParams.container"
-                    btnRadio="Unread">Unread</button>
+                    btnRadio="Unread"><i class="fa fa-envelope"></i> Unread</button>
                 <button (click)="loadMessages()" class="btn btn-sm btn-primary" [(ngModel)]="messageParams.container"
-                    btnRadio="Inbox">Inbox</button>
+                    btnRadio="Inbox"><i class="fa fa-envelope-open"></i> Inbox</button>
                 <button (click)="loadMessages()" class="btn btn-sm btn-primary" [(ngModel)]="messageParams.container"
-                    btnRadio="Outbox">Outbox</button>
+                    btnRadio="Outbox"><i class="fa fa-paper-plane"></i> Outbox</button>
             </div>
         </div>
     </div>
@@ -22,24 +22,25 @@
                         <th scope="col">Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody [hidden]="loading">
                     <tr *ngFor="let message of messages" class="cursor-pointer" routerLink='{{messageParams.container === "Outbox" ? 
                     "/members/" + message.receiverUsername : 
                     "/members/" + message.senderUsername}}'>
                         <td> {{ (message.content.length>32)? (message.content |
                             slice:0:32)+'...':(message.content) }}</td>
                         <td><img class="image-profile" src='{{messageParams.container === "Outbox" ? 
-                            message.receiverPhotoUrl : message.senderPhotoUrl}}'>
-                            {{messageParams.container === "Outbox" ? message.receiverUsername : message.senderUsername}}
+                            message.receiverPhotoUrl : message.senderPhotoUrl || "./assets/user.png"}} '>
+                            {{(messageParams.container === "Outbox" ?
+                            message.receiverUsername : message.senderUsername) | titlecase}}
                         </td>
                         <td>{{message.messageSentDate | timeago}}</td>
-                        <td><button class="btn btn-danger btn-sm">Delete</button></td>
+                        <td><button class="btn btn-danger btn-sm" (click)="$event.stopPropagation()" (click)="deleteMessage(message.id)">Delete</button></td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
-    <div class="row d-flex justify-content-center" *ngIf="pagination">
+    <div class="row d-flex justify-content-center" *ngIf="messages.length">
         <pagination [boundaryLinks]="true" [totalItems]="pagination.totalItems" [itemsPerPage]="pagination.itemsPerPage"
             [(ngModel)]="pagination.currentPage" (pageChanged)="pageChanged($event)" previousText="&lsaquo;"
             nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">

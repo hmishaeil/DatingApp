@@ -14,6 +14,7 @@ export class MessagesComponent implements OnInit {
   messages: Message[] = [];
   pagination: Pagination;
   messageParams: MessageParams = new MessageParams();
+  loading = false;
 
   constructor(private messageService: MessageService) {
   }
@@ -23,15 +24,26 @@ export class MessagesComponent implements OnInit {
   }
 
   loadMessages() {
+    this.loading = true;
     this.messageService.getMessages(this.messageParams).subscribe(res => {
       this.pagination = res.pagination;
       this.messages = res.result;
+      this.loading = false;
     })
   }
 
   pageChanged(event: any) {
     this.messageParams.pageNumber = event.page;
     this.loadMessages();
+  }
+
+  deleteMessage(id: number) {
+    this.messageService.deleteMessage(id).subscribe(
+      () => {
+        // For findIndex function, provide the predicate
+        this.messages.splice(this.messages.findIndex(m => m.id === id), 1);
+      }
+    );
   }
 
 }

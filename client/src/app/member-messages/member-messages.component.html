@@ -1,0 +1,35 @@
+<div class="container">
+    <div class="row mt-5">
+        <div class="col">
+            <ul class="list-group">
+                <li class="list-unstyled" *ngFor="let message of messages">
+                    <img class="float-right"
+                        src="{{message.senderUsername === member.username ? message.senderPhotoUrl : message.receiverPhotoUrl}}"
+                        alt="Card image cap">
+                    <p class="card-text">{{message.content}}</p>
+                    <small class="text-muted">
+                        <i class="fa fa-clock-o mr-1"></i>
+                        {{(message.senderUsername === member.username ? message.messageReadDate : message.messageSentDate) |
+                        timeago}}
+                    </small>
+                    <hr />
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            <form (ngSubmit)="sendMessage()" #sendMessageForm="ngForm" class="card-footer">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="messageContent" [(ngModel)]="messageContent"
+                    placeholder="{{'Send a message to ' + member.username | titlecase}}" required
+                    autocomplete="false">
+                    <div class="input-group-append">
+                        <button [disabled]="sendMessageForm.invalid" class="btn btn-outline-primary" type="button">Send</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+ 
