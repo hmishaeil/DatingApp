@@ -24,8 +24,9 @@ export class AccountService {
     return this.http.post(this.baseUrl + "account/login", model).pipe(
       map((res: User) => {
         if(res){
-          localStorage.setItem('user', JSON.stringify(res));
-          this.userResource.next(res);
+          // localStorage.setItem('user', JSON.stringify(res));
+          // this.userResource.next(res);
+          this.setCurrentUser(res);
         }
       })
     );
@@ -43,6 +44,16 @@ export class AccountService {
   }
 
   setCurrentUser(user: User){
+
+    user.roles = [];
+
+    const roles = this.getTokenInfo(user.token).role;
+
+    Array.isArray(roles) ? user.roles = roles : user.roles.push(roles);
+      console.log("user")
+      console.log(user)
+      console.log("user")
+
     localStorage.setItem('user', JSON.stringify(user));
     this.userResource.next(user) // Call the next to trigger the event, otherwise the subscribers won't be noticed.
   }
@@ -50,5 +61,9 @@ export class AccountService {
   logout(){
     localStorage.removeItem('user');
     this.userResource.next(null);
+  }
+
+  getTokenInfo(token: string){
+    return JSON.parse(atob(token.split('.')[1])); // To access to payload of the token, 0 for header, 1 for payload, and 2 for signature
   }
 }

@@ -31,6 +31,7 @@ namespace API.Controllers
             _iPhotoService = iPhotoService;
         }
 
+        // [Authorize(Roles = "Admin")] ==> in case of failure, we are receiving 403 as means user is authenticated but forbidden to do this action.
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MemberDTO>>> GetUsers([FromQuery] UserParams userParams)
         {
