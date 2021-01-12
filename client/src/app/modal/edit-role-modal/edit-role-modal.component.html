@@ -1,14 +1,20 @@
 <div class="modal-header">
-    <h4 class="modal-title pull-left">{{title}}</h4>
+    <h4 class="modal-title pull-left">{{"Edit roles for " + user}}</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <ul *ngIf="list.length">
-      <li *ngFor="let item of list">{{item}}</li>
-    </ul>
+    <form #editRoleForm="ngForm">
+      <div class="form-check" *ngFor="let appRole of appRoles">
+        <input class="form-check-input" type="checkbox" name="{{appRole.Name}}" [checked]="appRole.Checked" (change)="appRole.Checked = !appRole.Checked" >
+        <label class="form-check-label">
+          {{appRole.Name}}
+        </label>
+      </div>
+    </form>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-default" (click)="bsModalRef.hide()">{{closeBtnName}}</button>
+    <button type="button" class="btn btn-default" (click)="bsModalRef.hide()">Close</button>
+    <button type="button" class="btn btn-success" (click)="editRoles()">Submit</button>
   </div>

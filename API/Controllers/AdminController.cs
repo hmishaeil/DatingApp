@@ -40,6 +40,8 @@ namespace API.Controllers
         public async Task<ActionResult> EditRoles(string username, [FromQuery] string roles)
         {
 
+            if(string.IsNullOrEmpty(roles)) return BadRequest("No Parameter is provided.");
+
             var desiredRoles = roles.Split(",").ToArray();
 
             var user = await _userManager.FindByNameAsync(username);

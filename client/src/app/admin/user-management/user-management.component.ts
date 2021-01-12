@@ -26,9 +26,18 @@ export class UserManagementComponent implements OnInit {
     })
   }
 
-  openModalWithComponent() {
-    this.bsModalRef = this.modalService.show(EditRoleModalComponent, {});
-    this.bsModalRef.content.closeBtnName = 'Close';
+  openModalWithComponent(user: User) {
+
+    const initialState = {
+      user: user.username,
+      roles: user.roles
+    };
+
+    this.bsModalRef = this.modalService.show(EditRoleModalComponent, { initialState });
+    this.bsModalRef.content.newItemEvent.subscribe(res => {
+      this.users.filter(user => user.username === res.username).map(user => user.roles = res.roles);
+    })
+
   }
 
 }
