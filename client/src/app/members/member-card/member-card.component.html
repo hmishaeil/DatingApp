@@ -11,7 +11,8 @@
   </div>
   <div class="card-body text-center">
     <p class="card-text ">
-      <span class="fa fa-sm fa-user" [ngClass]="(presenceService.onlineUsers$ | async).includes(member.username) ? 'text-success' : 'text-muted'"></span>&nbsp;{{member.username | titlecase }}, {{member.age}}
+      <span class="fa fa-sm fa-user-circle" 
+      [ngClass]="(presenceService.onlineUsers$ | async).includes(member.username) ? 'text-success' : 'text-muted'"></span>&nbsp;{{member.username | titlecase }}, {{member.age}}
     </p>
   </div>
   <ul class="list-group list-group-flush text-center">

@@ -5,6 +5,9 @@
                 <img class="card-img-top thumbnail" src="{{member?.photoUrl || './assets/user.png'}}"
                     alt="Card image cap" />
                 <div class="card-body">
+                    <span class="fa fa-sm fa-user-circle" 
+                        [ngClass]="(presenceService.onlineUsers$ | async).includes(member.username) ? 'text-success' : 'text-muted'"></span>
+
                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
                         card's content.</p>
                     <div>

@@ -13,7 +13,7 @@ export class MemberCardComponent implements OnInit {
 
   @Input() member: Member
 
-  constructor(private memberService: MembersService, private toastr: ToastrService, private presenceService: PresenceService) { }
+  constructor(private memberService: MembersService, private toastr: ToastrService, public presenceService: PresenceService) { }
 
   ngOnInit(): void {
   }
