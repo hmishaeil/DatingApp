@@ -1,33 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { ConfirmModalContentComponent } from '../confirm-modal-content/confirm-modal-content.component';
 
 @Component({
   selector: 'app-confirm-modal',
   templateUrl: './confirm-modal.component.html',
   styleUrls: ['./confirm-modal.component.css']
 })
-export class ConfirmModalComponent implements OnInit {
+export class ConfirmModalComponent implements OnInit, OnDestroy {
 
-  bsModalRef: BsModalRef;
-  constructor(private modalService: BsModalService) {}
+  title: string = 'Confirm';
+  body: string = 'Are you sure?';
+  cancelBtnName: string = 'Cancel';
+  okBtnName: string = 'Ok';
 
-  openModalWithComponent() {
-    const initialState = {
-      list: [
-        'Open a modal with component',
-        'Pass your data',
-        'Do something else',
-        '...'
-      ],
-      title: 'Modal with component'
-    };
-    this.bsModalRef = this.modalService.show(ConfirmModalContentComponent, {initialState});
-    this.bsModalRef.content.closeBtnName = 'Close';
+  result: boolean = false;
+
+  confirmModalResultEvent = new EventEmitter<boolean>();
+
+  constructor(public bsModalRef: BsModalRef) { }
+
+  ngOnDestroy(): void {
+    this.confirmModalResultEvent.emit(this.result);
   }
 
-
-  ngOnInit(): void {
+  ngOnInit() {
   }
 
 }

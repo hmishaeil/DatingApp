@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { ConfirmModalComponent } from '../modal/confirm-modal/confirm-modal.component';
 import { Message } from '../_models/message';
 import { MessageParams } from '../_models/messageParams';
 import { Pagination } from '../_models/pagination';
@@ -16,7 +18,11 @@ export class MessagesComponent implements OnInit {
   messageParams: MessageParams = new MessageParams();
   loading = false;
 
-  constructor(private messageService: MessageService) {
+  bsModalRef: BsModalRef;
+  confirmModalResult: boolean;
+
+  constructor(private messageService: MessageService,
+    private modalService: BsModalService) {
   }
 
   ngOnInit(): void {
@@ -38,12 +44,18 @@ export class MessagesComponent implements OnInit {
   }
 
   deleteMessage(id: number) {
-    this.messageService.deleteMessage(id).subscribe(
-      () => {
-        // For findIndex function, provide the predicate
-        this.messages.splice(this.messages.findIndex(m => m.id === id), 1);
+    const initialState = {};
+    // this.bsModalRef.content.closeBtnName = 'Close';
+    this.bsModalRef = this.modalService.show(ConfirmModalComponent, { initialState });
+    this.bsModalRef.content.confirmModalResultEvent.subscribe((res: boolean) => {
+      if (res) {
+        this.messageService.deleteMessage(id).subscribe(
+          () => {
+            // For findIndex function, provide the predicate
+            this.messages.splice(this.messages.findIndex(m => m.id === id), 1);
+          }
+        );
       }
-    );
+    })
   }
-
 }
