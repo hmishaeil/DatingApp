@@ -69,14 +69,20 @@ namespace API
                             AllowAnyMethod().
                             AllowCredentials(). // For SignalR token which is passed via query string
                             WithOrigins("http://localhost:4200"));
+
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // Settings to find the client side files and start from index.html
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             // Add the route options 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<PresenceHub>("hubs/presence");
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }

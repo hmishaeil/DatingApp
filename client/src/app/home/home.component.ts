@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -7,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+
+  baseUrl = environment.apiUrl;
 
   registerMode = false
 
@@ -22,7 +25,7 @@ export class HomeComponent implements OnInit {
   }
 
   getUsers(){
-    this.http.get('https://localhost:5001/api/users').subscribe(res => {
+    this.http.get(this.baseUrl + 'users').subscribe(res => {
       this.users = res;
       console.log(this.users);
     })
