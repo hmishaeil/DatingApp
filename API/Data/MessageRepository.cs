@@ -45,6 +45,7 @@ namespace API.Data
 
             query = messageParams.Container switch
             {
+                // TODO: Optimizing the query (ProjectTo should be done first)
                 "Inbox" => query.Where(m => m.ReceiverUsername == messageParams.Username && m.ReceiverDeleted == false),
                 "Outbox" => query.Where(m => m.SenderUsername == messageParams.Username && m.SenderDeleted == false),
                 _ => query.Where(m => m.ReceiverUsername == messageParams.Username && m.ReceiverDeleted == false && m.MessageReadDate == null),
@@ -59,6 +60,7 @@ namespace API.Data
 
         public async Task<IEnumerable<MessageDTO>> GetMessageThread(string currentUsername, string recipientUsername)
         {
+            // TODO: Optimizing the query (ProjectTo should be done first)
             var messages = await _dataContext.Messages.
             Include(u => u.Sender).ThenInclude(p => p.Photos).
             Include(u => u.Receiver).ThenInclude(p => p.Photos).
@@ -80,9 +82,9 @@ namespace API.Data
             return _iMapper.Map<IEnumerable<MessageDTO>>(messages);
         }
 
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _dataContext.SaveChangesAsync() > 0;
-        }
+        // public async Task<bool> SaveAllAsync()
+        // {
+        //     return await _dataContext.SaveChangesAsync() > 0;
+        // }
     }
 }
